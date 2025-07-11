@@ -1,0 +1,5 @@
+{"level":"info","message":"🚀 Server is running on port 3000","timestamp":"2025-07-02 21:36:19"}
+{"level":"info","message":"📱 Health check: http://localhost:3000/health","timestamp":"2025-07-02 21:36:19"}
+{"level":"info","message":"🌐 API status: http://localhost:3000/api/status","timestamp":"2025-07-02 21:36:19"}
+{"level":"info","message":"API status endpoint accessed","timestamp":"2025-07-02 21:36:51"}
+{"level":"info","message":"::1 - - [03/Jul/2025:04:36:51 +0000] \"GET /api/status HTTP/1.1\" 304 - \"-\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36\"\n","timestamp":"2025-07-02 21:36:51"}
