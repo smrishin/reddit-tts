@@ -1,28 +1,6 @@
 {
-  "name": "reddit-tts",
-  "version": "1.0.0",
-  "description": "Reddit TTS API",
-  "main": "app.js",
-  "scripts": {
-    "start": "node app.js",
-    "dev": "nodemon app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [
-    "express",
-    "reddit",
-    "tts"
-  ],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
-    "cors": "^2.8.5",
-    "express": "^4.18.2",
-    "helmet": "^7.1.0",
-    "morgan": "^1.10.0",
-    "winston": "^3.17.0"
-  },
-  "devDependencies": {
-    "nodemon": "^3.0.2"
+    "@elevenlabs/elevenlabs-js": "^2.19.0",
+    "dotenv": "^17.2.3"
   }
 }
