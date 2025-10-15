@@ -1,0 +1,17 @@
+<!-- index.html -->
+<html>
+  <body>
+    <textarea id="text" rows="4" cols="50">
+This is a local JS browser TTS example.
+    </textarea>
+    <button onclick="speak()">Speak</button>
+
+    <script>
+      function speak() {
+        const text = document.getElementById("text").value;
+        const utterance = new SpeechSynthesisUtterance(text);
+        speechSynthesis.speak(utterance);
+      }
+    </script>
+  </body>
+</html>

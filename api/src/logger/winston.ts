@@ -1,5 +1,5 @@
-const { format, createLogger, transports } = require("winston");
-const path = require("path");
+import { format, createLogger, transports, Logger } from "winston";
+import path from "path";
 
 // Define log format
 const logFormat = format.combine(
@@ -21,7 +21,7 @@ const consoleFormat = format.combine(
 );
 
 // instantiate a new Winston Logger with the settings defined above
-const logger = createLogger({
+const logger: Logger = createLogger({
   level: process.env.LOG_LEVEL || "info",
   format: logFormat,
   transports: [
@@ -51,13 +51,11 @@ const logger = createLogger({
 });
 
 // create a stream object with a 'write' function that will be used by `morgan`
-logger.stream = {
-  write: function (message) {
+(logger as any).stream = {
+  write: function (message: string) {
     // use the 'info' log level so the output will be picked up by both transports (file and console)
     logger.info(message);
   }
 };
 
-module.exports = {
-  logger
-};
+export { logger };
