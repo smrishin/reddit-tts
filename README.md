@@ -205,3 +205,21 @@ The application uses Winston for structured logging. Logs are written to:
 - **Helmet** - Security headers
 - **CORS** - Cross-origin resource sharing
 - **Morgan** - HTTP request logging
+
+## Debugging the API
+
+Quick instructions to run and debug the API in VS Code (API code lives in the `api/` folder):
+
+- Use the `Launch API (ts-node)` configuration to run the API directly with `ts-node`.
+- Use the `Launch API (nodemon)` configuration to run the API with `nodemon` (auto-restart on changes).
+- Use the `Attach to API (9229)` configuration to attach the debugger to a running process started with the inspector.
+
+NPM scripts (in `api/package.json`):
+
+- `npm run dev` — run with `ts-node`.
+- `npm run dev:watch` — run with `nodemon`.
+- `npm run debug` — start Node with the inspector on port 9229 and break at start (for attaching).
+- `npm run dev:debug` — start nodemon with inspector enabled on port 9229.
+
+Example: start the API with the inspector and then choose `Attach to API (9229)` in VS Code Debug panel.
+

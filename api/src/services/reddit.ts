@@ -1,5 +1,5 @@
-import axios, { AxiosResponse } from 'axios';
-import logger from '../logger';
+import axios, { AxiosResponse } from "axios";
+import logger from "../logger";
 
 // Reddit API types
 export interface RedditPost {
@@ -17,15 +17,22 @@ export interface RedditPost {
   domain: string;
 }
 
-export interface RedditListing {
-  kind: string;
+export interface RedditComment {
+  id: string;
+  body: string;
+  author: string;
+  ups: number;
+  downs: number;
+  replies?: RedditListing<RedditComment> | string; // sometimes "replies" is "" when no replies
+}
+
+export interface RedditListing<T> {
+  kind: string; // usually "Listing"
   data: {
     children: Array<{
-      kind: string;
-      data: RedditPost;
+      kind: string; // e.g. "t3" for post, "t1" for comment
+      data: T;
     }>;
-    after: string | null;
-    before: string | null;
   };
 }
 
@@ -39,6 +46,12 @@ export interface RedditApiResponse {
   };
 }
 
+// Response for /comments/{postId}.json
+export type RedditCommentsResponse = [
+  RedditListing<RedditPost>,
+  RedditListing<RedditComment>
+];
+
 export interface RedditServiceResponse {
   success: boolean;
   data?: RedditPost[];
@@ -47,8 +60,8 @@ export interface RedditServiceResponse {
 }
 
 class RedditService {
-  private readonly baseUrl = 'https://www.reddit.com';
-  private readonly userAgent = 'RedditTTS/1.0.0 (by /u/your_username)';
+  private readonly baseUrl = "https://www.reddit.com";
+  private readonly userAgent = "RedditTTS/1.0.0 (by /u/your_username)";
 
   /**
    * Fetch hot posts from r/TIFU subreddit
@@ -63,8 +76,8 @@ class RedditService {
         `${this.baseUrl}/r/TIFU/hot.json`,
         {
           headers: {
-            'User-Agent': this.userAgent,
-            'Accept': 'application/json'
+            "User-Agent": this.userAgent,
+            Accept: "application/json"
           },
           params: {
             limit: Math.min(limit, 100), // Reddit API max is 100
@@ -78,8 +91,8 @@ class RedditService {
         throw new Error(`Reddit API returned status ${response.status}`);
       }
 
-      const posts = response.data.data.children.map(child => child.data);
-      
+      const posts = response.data.data.children.map((child) => child.data);
+
       logger.info(`Successfully fetched ${posts.length} posts from r/TIFU`);
 
       return {
@@ -87,10 +100,10 @@ class RedditService {
         data: posts,
         count: posts.length
       };
-
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-      logger.error('Failed to fetch TIFU hot posts', {
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error occurred";
+      logger.error("Failed to fetch TIFU hot posts", {
         error: errorMessage,
         stack: error instanceof Error ? error.stack : undefined
       });
@@ -111,12 +124,12 @@ class RedditService {
     try {
       logger.info(`Fetching post ${postId} from r/TIFU`);
 
-      const response: AxiosResponse<RedditApiResponse> = await axios.get(
+      const response: AxiosResponse<RedditCommentsResponse> = await axios.get(
         `${this.baseUrl}/r/TIFU/comments/${postId}.json`,
         {
           headers: {
-            'User-Agent': this.userAgent,
-            'Accept': 'application/json'
+            "User-Agent": this.userAgent,
+            Accept: "application/json"
           },
           params: {
             raw_json: 1
@@ -130,10 +143,10 @@ class RedditService {
       }
 
       // The first element contains the post data
-      const post = response.data.data.children[0]?.data;
-      
+      const post = response.data[0].data.children[0]?.data;
+
       if (!post) {
-        throw new Error('Post not found');
+        throw new Error("Post not found");
       }
 
       logger.info(`Successfully fetched post ${postId} from r/TIFU`);
@@ -143,10 +156,10 @@ class RedditService {
         data: [post],
         count: 1
       };
-
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-      logger.error('Failed to fetch TIFU post', {
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error occurred";
+      logger.error("Failed to fetch TIFU post", {
         postId,
         error: errorMessage,
         stack: error instanceof Error ? error.stack : undefined
@@ -165,7 +178,10 @@ class RedditService {
    * @param limit - Number of posts to fetch (default: 10, max: 100)
    * @returns Promise<RedditServiceResponse>
    */
-  async searchTIFUPosts(query: string, limit: number = 10): Promise<RedditServiceResponse> {
+  async searchTIFUPosts(
+    query: string,
+    limit: number = 10
+  ): Promise<RedditServiceResponse> {
     try {
       logger.info(`Searching for "${query}" in r/TIFU`);
 
@@ -173,14 +189,14 @@ class RedditService {
         `${this.baseUrl}/r/TIFU/search.json`,
         {
           headers: {
-            'User-Agent': this.userAgent,
-            'Accept': 'application/json'
+            "User-Agent": this.userAgent,
+            Accept: "application/json"
           },
           params: {
             q: query,
             limit: Math.min(limit, 100),
-            sort: 'hot',
-            t: 'all',
+            sort: "hot",
+            t: "all",
             raw_json: 1
           },
           timeout: 10000
@@ -191,19 +207,21 @@ class RedditService {
         throw new Error(`Reddit API returned status ${response.status}`);
       }
 
-      const posts = response.data.data.children.map(child => child.data);
-      
-      logger.info(`Successfully found ${posts.length} posts for query "${query}" in r/TIFU`);
+      const posts = response.data.data.children.map((child) => child.data);
+
+      logger.info(
+        `Successfully found ${posts.length} posts for query "${query}" in r/TIFU`
+      );
 
       return {
         success: true,
         data: posts,
         count: posts.length
       };
-
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-      logger.error('Failed to search TIFU posts', {
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error occurred";
+      logger.error("Failed to search TIFU posts", {
         query,
         error: errorMessage,
         stack: error instanceof Error ? error.stack : undefined
@@ -217,4 +235,4 @@ class RedditService {
   }
 }
 
-export default new RedditService(); 
+export default new RedditService();

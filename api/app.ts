@@ -1,3 +1,9 @@
+import dotenv from "dotenv";
+import path from "path";
+
+// dotenv.config({ path: path.resolve(process.cwd(), "api/.env.local") });
+dotenv.config({ path: path.resolve(__dirname, ".env.local") });
+
 import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
 import helmet from "helmet";

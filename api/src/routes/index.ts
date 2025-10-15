@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import logger from "../logger";
 import { ApiResponse, RouteHandler } from "../types";
 import redditRoutes from "./reddit";
+import testRoutes from "./test";
 
 const router = express.Router();
 
@@ -30,7 +31,7 @@ const statusHandler: RouteHandler = (req: Request, res: Response) => {
     message: "API is running",
     endpoints: {
       health: "/health",
-      status: "/api/status",
+      status: "/api/statuss",
       "reddit/{subreddit}/hot": "/api/reddit/{subreddit}/hot",
       "reddit/{subreddit}/post": "/api/reddit/{subreddit}/post",
       "reddit/{subreddit}/search": "/api/reddit/{subreddit}/search"
@@ -45,5 +46,6 @@ router.get("/api/status", statusHandler);
 
 // Reddit API routes
 router.use("/api/reddit", redditRoutes);
+router.use("/api/test", testRoutes);
 
 export default router;
